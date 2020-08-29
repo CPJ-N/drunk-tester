@@ -307,7 +307,7 @@ app.post('/savequizprogress/:sessionid', asyncHandler(async (req, res, next) =>
 }));
 
 // Description:  Save session progress
-// example: curl -X POST -H "Content-Type: application/json" -d '{"q1":"abc","q2":"def"}' https://localhost:3000/savequizprogress/<sessionid>
+// example: curl https://localhost:3000/readquiz/<sessionid>
 // Behavior:
 //      When successful will return HTTP 200 with OK
 //      When failed, HTTP 400 is returned
