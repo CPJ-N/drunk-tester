@@ -34,6 +34,7 @@ const client = new CosmosClient({ endpoint, key });
 
 const database = client.database(databaseId);
 const container = database.container(containerId);
+let currentsession = null;
 // ****************************************
 
 let port = 3000;
@@ -171,6 +172,17 @@ async function upsertProgress(body, sessionid, container) {
 app.use(express.static("front_end"));
 app.use(express.json());
 
+app.get(
+  "/currentsession",
+  asyncHandler(async (req, res, next) => {
+    if (currentsession) {
+      res.json({ token: currentsession });
+    } else {
+      res.send("no session");
+    }
+  })
+);
+
 // Description:  Adds a user to the system
 // example: curl -X POST "http://localhost:3000/adduser?username=hello&password=world"
 // Behavior:
@@ -244,7 +256,7 @@ app.get(
       let token = await createSession(req.query.username, container);
 
       console.log(`generated session token ${token}`);
-
+      currentsession = token;
       res.json({ token: token });
     } else {
       // no user with the right username and password
@@ -296,7 +308,7 @@ app.get(
         res.status(404).send("Invalid request.");
       } else {
         console.log("Session found");
-        var json = JSON.stringify(session);
+        let json = JSON.stringify(session);
 
         console.log(session.body);
 
