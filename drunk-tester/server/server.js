@@ -168,7 +168,8 @@ async function upsertProgress(body, sessionid, container) {
 }
 
 // all static html will come from a 'public' folder
-app.use(express.static("public"));
+app.use(express.static("front_end"));
+app.use(express.json());
 
 // Description:  Adds a user to the system
 // example: curl -X POST "http://localhost:3000/adduser?username=hello&password=world"
@@ -208,7 +209,8 @@ app.post(
 
     await upsertUser(newUser, container);
 
-    res.send("OK");
+    res.status(200);
+    res.json("OK");
   })
 );
 
@@ -222,7 +224,7 @@ app.get(
   asyncHandler(async (req, res, next) => {
     // validate input parameters
     if (req.query.username == undefined || req.query.password == undefined) {
-      res.statusCode(400).send("Invalid request");
+      res.statusCode(400).json("Invalid request");
     }
 
     let query = `SELECT * from c where c.type=\"user\" and c.username=\"${
@@ -243,10 +245,10 @@ app.get(
 
       console.log(`generated session token ${token}`);
 
-      res.send(token);
+      res.json({ token: token });
     } else {
       // no user with the right username and password
-      res.status(400).send("Invalid request");
+      res.status(400).json("Invalid request");
       console.log(`No user match found`);
     }
   })
@@ -269,7 +271,7 @@ app.post(
         await upsertProgress(req.body, req.params.sessionid, container);
       }
 
-      res.send("OK");
+      res.json("OK");
     } catch (error) {
       console.log(error);
       res.status(400).send("Invalid request.");
