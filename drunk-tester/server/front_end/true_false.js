@@ -188,7 +188,10 @@ function onSubmit() {
     body: JSON.stringify(responses),
   })
     .then((response) => response.text())
-    .then((result) => console.log(result))
+    .then((result) => {
+      console.log(result);
+      document.location.href = "result.html";
+    })
     .catch((error) => console.log("error", error));
 
   console.log(responses);
