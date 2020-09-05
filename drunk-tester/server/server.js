@@ -109,6 +109,21 @@ async function getSession(sessionid,container)
     }
 }
 
+async function getAllData(container)
+{
+    let query = `SELECT * from c where c.type=\"quizattempt\"`;
+    let items = await runQuery(query,container);
+    
+    if (items === undefined || items === null || items.length === 0)
+    {
+        return null;
+    }
+    else
+    {
+        return items;
+    }
+}
+
 async function getSessionData(sessionid,container)
 {
     let query = `SELECT * from c where c.type=\"quizattempt\" and c.sessionid = \"${sessionid}\"`;
@@ -340,12 +355,12 @@ app.get('/readquiz/:sessionid', asyncHandler(async (req, res, next) =>
     }
 }));
 
-app.get('/results/:user', function (req, res) {
-    let listOfResults = [];
-    console.log(`get results for user  ${req.params.user} with body of ${req.body}`);
+app.get('/report', asyncHandler(async (req, res, next) =>
+{
+    let listOfResults = await getAllData(container)
 
     res.json(listOfResults);
-});
+}));
 
 function getTokenSegment() {
     return Math.round(Math.random() * 1000);
